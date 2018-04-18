@@ -1,4 +1,5 @@
-#Prueba de Github
+# -*- coding: utf-8 -*-
+
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from pymongo import MongoClient
@@ -37,7 +38,7 @@ for autor in lista_unica_autores:
 
             for iteratorAlbum in range (len(albums['items'])):
                 albumId = albums['items'][iteratorAlbum]['id']
-                #album = sp.album(albumId)   #info del album para sacar el género
+                #album = sp.album(albumId)   #info del album para sacar el genero
                 tracks = sp.album_tracks(albumId, limit=50)   #tracks de cada album
                 try: 
                     for iteratorTrack in range (len(tracks['items'])):
@@ -51,7 +52,7 @@ for autor in lista_unica_autores:
                                 #tracks['items'][iteratorTrack]['audio_analisis'] = audio
                                 tracks['items'][iteratorTrack]['release_date'] = albums['items'][iteratorAlbum]['release_date']
                                 #tracks['items'][iteratorTrack]['genre'] = album['genres']
-                                result = db.LetraD.insert_one(tracks['items'][iteratorTrack]) #Features es el nombre de la colección
+                                result = db.LetraD.insert_one(tracks['items'][iteratorTrack]) #Features es el nombre de la coleccion
                             except:
                                 None
                 except:
