@@ -1,49 +1,55 @@
 # -*- coding: utf-8 -*-
 
+import time
+import logging
+
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from pymongo import MongoClient
-import time
 
-Log = open('C:\\Temp\\Resultado_D.txt', 'wb')
-Log.write('Fecha y hora INICIO ' + time.strftime('%c'))  # Hora de inicio
+logging.basicConfig(filename='../datos/logs/logs_D.log', filemode='w', level=logging.INFO)
+logging.info('Fecha y hora de INICIO: ' + time.strftime('%c'))
 
-ficheroEntrada = open('C:\\Temp\\Billboard_authors_D.txt', 'rb')
-autores_fichero = ficheroEntrada.readline()
+fichero_entrada = open('../datos/artistas/Billboard_authors_D.txt', 'r')
+artistas_fichero = fichero_entrada.readline()
+fichero_entrada.close()
 
-lista_autores = autores_fichero.split('|')
-lista_unica_autores = list(set(lista_autores))
-lista_unica_autores.sort()
+lista_artistas = artistas_fichero.split('|')
+artistas_fichero = None # free memory
+lista_unica_artistas = list(set(lista_artistas))
+lista_unica_artistas.sort()
 
-numeroAutores = 0
+numero_artistas_validos = 0
+numero_artistas_spotify = 0
 
 client_credentials_manager = SpotifyClientCredentials(client_id='9d4ce57a9fd74454800518b361d5d849',
                                                       client_secret='254f846eba8a4388840c99a11032ca14')
-sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+spotipy_instance = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 client = MongoClient()
-db = client.Test  # Test nombre de la bbdd
+db = client.Test  # Nombre de la bbdd es Test
 
-for autor in lista_unica_autores:
-    #    autor = 'DJ Aligator' # Para hacer testeos
-    if autor != "" and len(autor) != 1 and len(autor) != 0:
+for artista in lista_unica_artistas:
+    #    artista = 'DJ Aligator' # Para hacer testeos
+    if len(artista) > 0: # Puede haber nombres de artistas con una sola letra. Ejemplo: D
+        numero_artistas_validos += 1
+        artista_instancia = spotipy_instance.search(artista, type='artist')
 
-        artists = sp.search(autor, type='artist')
-
-        if artists['artists']['total'] != 0:
-            Log.write('Autor: ' + autor)
-            numeroAutores = numeroAutores + 1
-            artistId = artists['artists']['items'][0]['id']  # id de cada autor
-            albums = sp.artist_albums(artistId, album_type='Album', limit=50)  # albums de cada autor
+        if artista_instancia['artists']['total'] > 0:
+            logging.info('- Artista: ' + artista)
+            numero_artistas_spotify += 1
+            artista_id = artista_instancia['artists']['items'][0]['id']  # id de cada artista
+            albums = spotipy_instance.artist_albums(artista_id, album_type='Album', limit=50)  # albums de cada artista
 
             for iteratorAlbum in range(len(albums['items'])):
-                albumId = albums['items'][iteratorAlbum]['id']
+                album_id = albums['items'][iteratorAlbum]['id']
+                logging.info('-- Album: ' + album_id)
                 # album = sp.album(albumId)   #info del album para sacar el genero
-                tracks = sp.album_tracks(albumId, limit=50)  # tracks de cada album
+                tracks = spotipy_instance.album_tracks(album_id, limit=50)  # tracks de cada album
                 try:
                     for iteratorTrack in range(len(tracks['items'])):
-                        trackId = tracks['items'][iteratorTrack]['id']
-                        features = sp.audio_features(trackId)  # features de cada track
+                        track_id = tracks['items'][iteratorTrack]['id']
+                        features = spotipy_instance.audio_features(track_id)  # features de cada track
                         # audio = sp.audio_analysis(trackId)   #audio analisis de cada track
 
                         if features:
@@ -55,12 +61,13 @@ for autor in lista_unica_autores:
                                 # tracks['items'][iteratorTrack]['genre'] = album['genres']
                                 result = db.LetraD.insert_one(
                                     tracks['items'][iteratorTrack])  # Features es el nombre de la coleccion
-                            except:
-                                None
+                            except :
+                                logging.error('-- Artista -> %s, album -> %s y cancion -> %s' %(artista, album_id, track_id))
                 except:
-                    ficheroEntrada.close()
-ficheroEntrada.close()
-Log.write('Numero de autores insertados: ' + numeroAutores)
-Log.write('Fecha y hora FIN ' + time.strftime('%c'))
+                    logging.error('-- Artista -> %s y album -> %s' % (artista, album_id))
+        else:
+            logging.warning('- Artista no encontrado: ' + str(artista))
 
-Log.close()
+logging.info('Fecha y hora FIN: ' + time.strftime('%c'))
+logging.info('Numero de artistas validos: ' + str(numero_artistas_validos))
+logging.info('Numero de artistas insertados: ' + str(numero_artistas_spotify))
