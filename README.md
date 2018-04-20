@@ -4,10 +4,13 @@ Este proyecto consiste en el proceso ETL (Extraction, Transformation an Load) de
 Estas instrucciones te permitirán obtener una copia del proyecto en funcionamiento en tu máquina local.
 ### Prerrequisitos
 1. Tener instalado **Python** en el sistema operativo. 
-2. Disponer de **pip** para poder instalar todos los complementos necesarios. Para ello, abre un terminal y ejecuta:
+2. Tener instalado **pip** para poder instalar todos los complementos necesarios. Para comprobar si tu sistema ya lo tiene, escribe en la consola:
 ```
-python get-pip.py
+pip
 ```
+Si tu sistema no reconoce el comando, necesitas instalarlo:
+- Windows: https://github.com/BurntSushi/nfldb/wiki/Python-&-pip-Windows-installation
+- Ubuntu: https://www.saltycrane.com/blog/2010/02/how-install-pip-ubuntu/
 3. Instalar **virtualenv*. La cual es una herramienta de desarrollo usada para crear entornos aislados para Python, en los que es posible instalar paquetes sin interferir en el resto de paquetes instalados en el sistema o en otros entornos virtuales.
 Para ello escribe en el terminal:
 ```
