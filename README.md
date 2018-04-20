@@ -11,7 +11,7 @@ pip
 Si tu sistema no reconoce el comando, necesitas instalarlo:
 - Windows: https://github.com/BurntSushi/nfldb/wiki/Python-&-pip-Windows-installation
 - Ubuntu: https://www.saltycrane.com/blog/2010/02/how-install-pip-ubuntu/
-3. Instalar **virtualenv*. La cual es una herramienta de desarrollo usada para crear entornos aislados para Python, en los que es posible instalar paquetes sin interferir en el resto de paquetes instalados en el sistema o en otros entornos virtuales.
+3. Instalar **virtualenv**. La cual es una herramienta de desarrollo usada para crear entornos aislados para Python, en los que es posible instalar paquetes sin interferir en el resto de paquetes instalados en el sistema o en otros entornos virtuales.
 Para ello escribe en el terminal:
 ```
 pip install virtualenv
@@ -37,7 +37,7 @@ git clone https://github.com/error404projectnotfound/Spotify-Python.git
 ```
 cd Spotify-Python
 ```
-7. Instala todos los paquetes necesarios para ejecutar el proyecto. **Recuerda que tienes tu entorno virtual activado y solo se instalarán en él**
+7. Instala todos los paquetes necesarios para ejecutar el proyecto. **Recuerda que tienes tu entorno virtual activado y solo se instalarán en él.**
 ```
 pip install requirements.txt
 ```
