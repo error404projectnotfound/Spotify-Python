@@ -10,7 +10,7 @@ from pymongo import MongoClient
 logging.basicConfig(filename='../datos/logs/logs_D.log', filemode='w', level=logging.INFO)
 logging.info('Fecha y hora de INICIO: ' + time.strftime('%c'))
 
-fichero_entrada = open('../datos/artistas/Billboard_authors_D.txt', 'r')
+fichero_entrada = open('../datos/artistas/Billboard_authors_D.txt', 'r', encoding='utf-8')
 artistas_fichero = fichero_entrada.readline()
 fichero_entrada.close()
 
@@ -59,8 +59,8 @@ for artista in lista_unica_artistas:
                                 tracks['items'][iteratorTrack]['release_date'] = albums['items'][iteratorAlbum][
                                     'release_date']
                                 # tracks['items'][iteratorTrack]['genre'] = album['genres']
-                                result = db.LetraD.insert_one(
-                                    tracks['items'][iteratorTrack])  # Features es el nombre de la coleccion
+                                #result = db.LetraD.insert_one(
+                                #    tracks['items'][iteratorTrack])  # Features es el nombre de la coleccion
                             except :
                                 logging.error('-- Artista -> %s, album -> %s y cancion -> %s' %(artista, album_id, track_id))
                 except:
