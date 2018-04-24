@@ -40,48 +40,61 @@ for artista in lista_unica_artistas:
         if artista_instancia['artists']['total'] > 0: # Comprueba que ela longitud del nombre del artista es valido
             logging.info('- Artista: ' + artista)
             numero_artistas_spotify += 1
-            artista_id = artista_instancia['artists']['items'][0]['id']  # Id de cada artista
-            albums = spotipy_instance.artist_albums(artista_id, album_type='Album', limit=50)  # Albumes de cada artista
+            #sacamos las caracteristicas de los artistas
+            artist=artista_instancia['artists']['items'][0]
+            artist_id = artist['id']  # Id de cada artista
+            artist_followers=artist['followers']['total']
+            artist_genres=artist['genres']
+            artist_popularity=artist['popularity']
+            #artist_name=artista
+            #obtenemos los albunes
+            albums = spotipy_instance.artist_albums(artist_id, album_type='Album', limit=50)  # Albumes de cada artista
             logging.info('-- Numero de albumes: ' + str(len(albums['items'])))
 
             for iteratorAlbum in range(len(albums['items'])): # Itera los albumes del artista
-                album_id = albums['items'][iteratorAlbum]['id']
+                album=albums['items'][iteratorAlbum]
+                album_id =album['id']
+                album_type=album['album_type']
+                album_genres=album['genres']
+                album_label=album['label']
+                album_name=album['name']
+                album_popularity=album['popularity']
+                album_release_date=album['release_date']
+                album_realease_date_precision=album['release_date_precision']
                 logging.info('-- Album: ' + album_id)
+                #obtenemos las tracks del album
                 tracks = spotipy_instance.album_tracks(album_id, limit=50)  # tracks de cada album
                 logging.info('Numero de canciones: ' + str(len(tracks['items'])))
-
                 try:
                     for iteratorTrack in range(len(tracks['items'])): # Itera las canciones que contiene el album
                         track_id = tracks['items'][iteratorTrack]['id']
-
                         try:
                             track = spotipy_instance.track(track_id)
-                            popularity = track['popularity']
-                            name = track['name']
+                            #obtenemos los campos del objeto track
+                            track_avalible_markets=track['available_markets']
+                            track_explicit=track['explicit']
+                            track_name=track['name']
+                            track_popularidad=track['popularity']
+                            track_number=track['track_number']
+                            #obtenemos los campos del objeto features
                             features = spotipy_instance.audio_features(track_id)  # features de cada track
-                            danceability = features[0]['danceability']
-                            energy = features[0]['energy']
-                            clave_key = features[0]['key']
-                            loudness = features[0]['loudness']
-                            mode = features[0]['mode']
-                            speechiness = features[0]['speechiness']
-                            acousticness = features[0]['acousticness']
-                            instrumentalness = features[0]['instrumentalness']
-                            liveness = features[0]['liveness']
-                            valence = features[0]['valence']
-                            tempo = features[0]['tempo']
-                            tipo_type = features[0]['type']
-                            id_ = features[0]['id']
-                            uri = features[0]['uri']
-                            track_href = features[0]['track_href']
-                            analysis_url = features[0]['analysis_url']
-                            duration_ms = features[0]['duration_ms']
-                            time_signature = features[0]['time_signature']
+                            features_acousticness = features[0]['acousticness']
+                            features_analysis_url=features[0]['analysis_url']
+                            features_danceability= features[0]['danceability']
+                            features_duration_ms = features[0]['duration_ms']
+                            features_energy = features[0]['energy']
+                            features_instrumentalness = features[0]['instrumentalness']
+                            features_key = features[0]['key']
+                            features_liveness= features[0]['liveness']
+                            features_loudness = features[0]['loudness']
+                            features_mode = features[0]['mode']
+                            features_speechiness= features[0]['speechiness']
+                            features_tempo= features[0]['tempo']
+                            features_time_signature = features[0]['time_signature']
+                            features_valence = features[0]['valence']
                             # Fila a insertar en la tabla
-                            rows_to_insert = [(popularity, danceability, energy, clave_key, loudness, mode,
-                                               speechiness, acousticness, instrumentalness, liveness, valence,
-                                               tempo, tipo_type, id_, uri, track_href, analysis_url, duration_ms,
-                                               time_signature, name)]
+                            rows_to_insert = [(artist_followers,artist_genres,artist_id,artista,artist_popularity,album_type,album_genres,album_id,album_label,album_name,album_popularity,album_release_date,album_realease_date_precision,features_acousticness,features_analysis_url,features_danceability,features_duration_ms,features_energy,features_instrumentalness,features_key,features_liveness,features_loudness,features_mode,features_speechiness,features_tempo,features_time_signature,features_valence,track_avalible_markets,track_explicit,track_id,track_name,track_popularidad,track_number)]
+                            
                             # Autenticación
                             os.environ[
                                 'GOOGLE_APPLICATION_CREDENTIALS'] = path + 'MusicProjectTest-98a6983937ab.json'
