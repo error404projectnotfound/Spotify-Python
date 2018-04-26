@@ -8,8 +8,8 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from google.cloud.bigquery.client import Client
 
-fecha = time.strftime("%Y%m%d_%H%M")
-logging.basicConfig(filename='../datos/logs/logs_'+fecha+'.log', filemode='w', level=logging.INFO)
+#fecha = time.strftime("%Y%m%d_%H%M")
+logging.basicConfig(filename='../datos/logs/logs_a.log', filemode='a', level=logging.INFO)
 logging.info('Fecha y hora de INICIO: ' + time.strftime('%c'))
 
 fichero_entrada = open('../datos/artistas/Billboard_authors_A.txt', 'r', encoding='utf-8')
@@ -65,7 +65,7 @@ for artista in lista_unica_artistas:
                 album_popularity=""
                 album_release_date=album['release_date']
                 album_realease_date_precision=album['release_date_precision']
-                logging.info('--- Album['+str(iteratorAlbum)+']: ' + album_name+"("+album_id+")")
+                logging.info('---Album['+str(iteratorAlbum)+']: ' + album_name+"("+album_id+")")
                 #obtenemos las tracks del album
                 tracks = spotipy_instance.album_tracks(album_id, limit=50)  # tracks de cada album
                 logging.info('----Numero de canciones: ' + str(len(tracks['items'])))
@@ -97,7 +97,12 @@ for artista in lista_unica_artistas:
                             features_time_signature = features[0]['time_signature']
                             features_valence = features[0]['valence']
                             # Fila a insertar en la tabla
-                            rows_to_insert = [(artista,artist_followers,str(artist_genres),artist_id,artist_popularity,album_type,album_genres,album_id,album_label,album_name,album_popularity,album_release_date,album_realease_date_precision,track_name,str(track_avalible_markets),str(track_explicit),track_id,track_popularidad,track_number,features_acousticness,features_analysis_url,features_danceability,features_duration_ms,features_energy,features_instrumentalness,features_key,features_liveness,features_loudness,features_mode,features_speechiness,features_tempo,features_time_signature,features_valence)]
+                            rows_to_insert = [(artista,artist_followers,str(artist_genres),artist_id,artist_popularity,
+                                               album_type,album_genres,album_id,album_label,album_name,album_popularity,
+                                               album_release_date,album_realease_date_precision,track_name,str(track_avalible_markets),
+                                               str(track_explicit),track_id,track_popularidad,track_number,features_acousticness,features_analysis_url,
+                                               features_danceability,features_duration_ms,features_energy,features_instrumentalness,features_key,features_liveness,
+                                               features_loudness,features_mode,features_speechiness,features_tempo,features_time_signature,features_valence)]
                             # Autenticación
                             os.environ[
                                 'GOOGLE_APPLICATION_CREDENTIALS'] = '../datos/MusicProjectTest-98a6983937ab.json'
