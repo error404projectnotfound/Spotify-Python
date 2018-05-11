@@ -111,7 +111,7 @@ for artista in lista_unica_artistas:
                             # Se establece la BBDD
                             dataset_ref = big_query_client.dataset('musicDataset')
                             # establecemos la tabla
-                            table_ref = dataset_ref.table('datos_spotify_test')
+                            table_ref = dataset_ref.table('datos_spotify_A')
                             table = big_query_client.get_table(table_ref)
                             # Insertar datos en Big Query
                             errors = big_query_client.insert_rows(table, rows_to_insert)  # API request
