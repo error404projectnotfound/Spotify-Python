@@ -24,8 +24,8 @@ lista_unica_artistas.sort()
 numero_artistas_validos = 0 # Numero de artistas que por longitud, sus nombres pueden ser validos
 numero_artistas_spotify = 0 # Numero de artistas que se han solicitado a Spotify de forma satisfactoria
 
-client_credentials_manager = SpotifyClientCredentials(client_id='9d4ce57a9fd74454800518b361d5d849',
-                                                      client_secret='254f846eba8a4388840c99a11032ca14')
+client_credentials_manager = SpotifyClientCredentials(client_id='',
+                                                      client_secret='')
 spotipy_instance = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 #client = MongoClient()
