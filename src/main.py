@@ -8,11 +8,12 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from google.cloud.bigquery.client import Client
 
+letra_numero_fichero = 'S_2'
 
-logging.basicConfig(filename='../datos/logs/logs_S2.log', filemode='a', level=logging.INFO)
+logging.basicConfig(filename='../datos/logs/logs_{}.log'.format(letra_numero_fichero), filemode='a', level=logging.INFO)
 logging.info('Fecha y hora de INICIO: ' + time.strftime('%c'))
 
-fichero_entrada = open('../datos/artistas/0Billboard_authors_S_2.txt', 'r', encoding='utf-8')
+fichero_entrada = open('../datos/artistas/0Billboard_authors_{}.txt'.format(letra_numero_fichero), 'r', encoding='utf-8')
 artistas_fichero = fichero_entrada.readline()
 fichero_entrada.close()
 
@@ -125,7 +126,7 @@ try:
                                         # Se establece la BBDD
                                         dataset_ref = big_query_client.dataset('musicDataset')
                                         # establecemos la tabla
-                                        table_ref = dataset_ref.table('Adrian_datos_spotify_S2')
+                                        table_ref = dataset_ref.table('Adrian_datos_spotify_{}'.format(letra_numero_fichero))
                                         table = big_query_client.get_table(table_ref)
                                         # Insertar datos en Big Query
                                         errors = big_query_client.insert_rows(table, rows_to_insert)  # API request
