@@ -3,16 +3,16 @@
 import time
 import logging
 import os
-#from os import path
+import json
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from google.cloud.bigquery.client import Client
 
-#fecha = time.strftime("%Y%m%d_%H%M")
+
 logging.basicConfig(filename='../datos/logs/logs_S2.log', filemode='a', level=logging.INFO)
 logging.info('Fecha y hora de INICIO: ' + time.strftime('%c'))
 
-fichero_entrada = open('../datos/artistas/0Billboard_authors_S_89.txt', 'r', encoding='utf-8')
+fichero_entrada = open('../datos/artistas/0Billboard_authors_S_2.txt', 'r', encoding='utf-8')
 artistas_fichero = fichero_entrada.readline()
 fichero_entrada.close()
 
@@ -24,8 +24,11 @@ lista_unica_artistas.sort()
 numero_artistas_validos = 0 # Numero de artistas que por longitud, sus nombres pueden ser validos
 numero_artistas_spotify = 0 # Numero de artistas que se han solicitado a Spotify de forma satisfactoria
 
-client_credentials_manager = SpotifyClientCredentials(client_id='9d4ce57a9fd74454800518b361d5d849',
-                                                      client_secret='254f846eba8a4388840c99a11032ca14')
+with open('../datos/credenciales/cred_spotify.json') as f:
+    credenciales_spotify = json.load(f)
+
+client_credentials_manager = SpotifyClientCredentials(client_id=credenciales_spotify['client_id'],
+                                                      client_secret=credenciales_spotify['client_secret'])
 spotipy_instance = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 #client = MongoClient()
@@ -116,7 +119,7 @@ try:
                                                            features_loudness,features_mode,features_speechiness,features_tempo,features_time_signature,features_valence)]
                                         # Autenticación
                                         os.environ[
-                                            'GOOGLE_APPLICATION_CREDENTIALS'] = '../datos/MusicProjectTest-98a6983937ab.json'
+                                            'GOOGLE_APPLICATION_CREDENTIALS'] = '../datos/credenciales/MusicProjectTest-98a6983937ab.json'
                                         # Conexion con la API de Big Query
                                         big_query_client = Client()
                                         # Se establece la BBDD
