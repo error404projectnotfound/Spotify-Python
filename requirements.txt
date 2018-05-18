@@ -1,3 +1,4 @@
 spotipy
 pymongo
 google-cloud
+google.cloud.bigquery
