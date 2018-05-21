@@ -8,12 +8,14 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from google.cloud.bigquery.client import Client
 
-letra_numero_fichero = 'S_2'
+letra_numero_fichero = 'L_24'
+letra_fichero = 'L'
 
 logging.basicConfig(filename='../datos/logs/logs_{}.log'.format(letra_numero_fichero), filemode='a', level=logging.INFO)
 logging.info('Fecha y hora de INICIO: ' + time.strftime('%c'))
 
-fichero_entrada = open('../datos/artistas/0Billboard_authors_{}.txt'.format(letra_numero_fichero), 'r', encoding='utf-8')
+fichero_entrada = open('../datos/artistas/subfiles/Billboard_authors_{}.txt'.format(letra_numero_fichero), 'r', encoding='utf-8')
+                           
 artistas_fichero = fichero_entrada.readline()
 fichero_entrada.close()
 
@@ -36,13 +38,13 @@ spotipy_instance = spotipy.Spotify(client_credentials_manager=client_credentials
 #db = client.Test  # Nombre de la BBDD es Test
 try:
     for artista in lista_unica_artistas:
-        if len(artista) > 1: # Puede haber nombres de artistas con una sola letra. Ejemplo: D
+        if len(artista) > 1: # Puede haber nombres de artistas con una sola letra. Ejemplo: D y no nos interesan
             numero_artistas_validos += 1
-            artista_instancia = spotipy_instance.search(artista, type='artist')
+            artista_instancia = spotipy_instance.search(artista, type='artist') # Devuelve una lista de artista (sin parámetro son 10 como máximo)
             ArtistOK = False
 
-            if artista_instancia['artists']['total'] > 0: # Comprueba que ela longitud del nombre del artista es valido
-                for iteratorArtists in range(len(artista_instancia['artists']['items'])): # Itera los albumes del artista
+            if artista_instancia['artists']['total'] > 0: # Comprueba que la longitud del nombre del artista es valido
+                for iteratorArtists in range(len(artista_instancia['artists']['items'])): # Chequea que en la lista de artistas que te devuelve vamos a trabajar con el que nos interesa
                     if artista_instancia['artists']['items'][iteratorArtists]['name'] == artista:
                         ArtistOK = True
                         itArtists = iteratorArtists
@@ -64,7 +66,7 @@ try:
                     albums = spotipy_instance.artist_albums(artist_id, album_type='Album', limit=50)  # Albumes de cada artista
                     #albums=results['items']
                     #albums.extend(results['items'])
-                    logging.info('-- Numero de albumes: ' + str(len(albums)))
+                    logging.info('-- Numero de albumes: ' + str(len(albums['items'])))
                     for iteratorAlbum in range(len(albums['items'])): # Itera los albumes del artista
                     #for album in albums:
                         try:
@@ -93,7 +95,7 @@ try:
                                         track_avalible_markets=track['available_markets']
                                         track_explicit=track['explicit']
                                         track_name=track['name']
-                                        track_popularidad=track['popularity']
+                                        track_popularity=track['popularity']
                                         track_number=track['track_number']
                                         #obtenemos los campos del objeto features
                                         features = spotipy_instance.audio_features(track_id)  # features de cada track
@@ -115,18 +117,19 @@ try:
                                         rows_to_insert = [(artista,artist_followers,str(artist_genres),artist_id,artist_popularity,
                                                            album_type,album_genres,album_id,album_label,album_name,album_popularity,
                                                            album_release_date,album_realease_date_precision,track_name,str(track_avalible_markets),
-                                                           str(track_explicit),track_id,track_popularidad,track_number,features_acousticness,features_analysis_url,
+                                                           str(track_explicit),track_id,track_popularity,track_number,features_acousticness,features_analysis_url,
                                                            features_danceability,features_duration_ms,features_energy,features_instrumentalness,features_key,features_liveness,
                                                            features_loudness,features_mode,features_speechiness,features_tempo,features_time_signature,features_valence)]
                                         # Autenticación
                                         os.environ[
-                                            'GOOGLE_APPLICATION_CREDENTIALS'] = '../datos/credenciales/MusicProjectTest-98a6983937ab.json'
+                                            'GOOGLE_APPLICATION_CREDENTIALS'] = '../datos/credenciales/MusicProjectTest-042a5c317e41.json'
                                         # Conexion con la API de Big Query
                                         big_query_client = Client()
                                         # Se establece la BBDD
-                                        dataset_ref = big_query_client.dataset('musicDataset')
+                                        dataset_ref = big_query_client.dataset('musicData')
                                         # establecemos la tabla
-                                        table_ref = dataset_ref.table('Adrian_datos_spotify_{}'.format(letra_numero_fichero))
+                                        table_ref = dataset_ref.table('datos_spotify_{}'.format(letra_fichero))
+                                        #table_ref = dataset_ref.table('Test') #Para hacer pruebas de insercciones
                                         table = big_query_client.get_table(table_ref)
                                         # Insertar datos en Big Query
                                         errors = big_query_client.insert_rows(table, rows_to_insert)  # API request
