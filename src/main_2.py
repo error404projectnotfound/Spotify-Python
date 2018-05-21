@@ -8,8 +8,8 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from google.cloud.bigquery.client import Client
 
-letra_numero_fichero = 'R_4'
-letra_fichero = 'R'
+letra_numero_fichero = 'S_24'
+letra_fichero = 'S'
 
 logging.basicConfig(filename='../datos/logs/logs_{}.log'.format(letra_numero_fichero), filemode='a', level=logging.INFO)
 logging.info('Fecha y hora de INICIO: ' + time.strftime('%c'))
@@ -95,7 +95,7 @@ try:
                                         track_avalible_markets=track['available_markets']
                                         track_explicit=track['explicit']
                                         track_name=track['name']
-                                        track_popularity=track['popularity']
+                                        track_popularidad=track['popularity']
                                         track_number=track['track_number']
                                         #obtenemos los campos del objeto features
                                         features = spotipy_instance.audio_features(track_id)  # features de cada track
@@ -117,19 +117,20 @@ try:
                                         rows_to_insert = [(artista,artist_followers,str(artist_genres),artist_id,artist_popularity,
                                                            album_type,album_genres,album_id,album_label,album_name,album_popularity,
                                                            album_release_date,album_realease_date_precision,track_name,str(track_avalible_markets),
-                                                           str(track_explicit),track_id,track_popularity,track_number,features_acousticness,features_analysis_url,
+                                                           str(track_explicit),track_id,track_popularidad,track_number,features_acousticness,features_analysis_url,
                                                            features_danceability,features_duration_ms,features_energy,features_instrumentalness,features_key,features_liveness,
                                                            features_loudness,features_mode,features_speechiness,features_tempo,features_time_signature,features_valence)]
                                         # Autenticación
                                         os.environ[
-                                            'GOOGLE_APPLICATION_CREDENTIALS'] = '../datos/credenciales/MusicProjectTest-042a5c317e41.json'
+                                            'GOOGLE_APPLICATION_CREDENTIALS'] = '../datos/credenciales/New2_MusicProjectTest-1e3a7059875f.json'
                                         # Conexion con la API de Big Query
                                         big_query_client = Client()
                                         # Se establece la BBDD
                                         dataset_ref = big_query_client.dataset('musicData')
                                         # establecemos la tabla
                                         table_ref = dataset_ref.table('datos_spotify_{}'.format(letra_fichero))
-                                        #table_ref = dataset_ref.table('Test') #Para hacer pruebas de insercciones
+                                        #table_ref = dataset_ref.table('S16')
+                                        #table_ref = dataset_ref.table('datos_spotify_S')
                                         table = big_query_client.get_table(table_ref)
                                         # Insertar datos en Big Query
                                         errors = big_query_client.insert_rows(table, rows_to_insert)  # API request
