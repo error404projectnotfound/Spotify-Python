@@ -8,8 +8,8 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from google.cloud.bigquery.client import Client
 
-letra_numero_fichero = 'L_24'
-letra_fichero = 'L'
+letra_numero_fichero = 'R_4'
+letra_fichero = 'R'
 
 logging.basicConfig(filename='../datos/logs/logs_{}.log'.format(letra_numero_fichero), filemode='a', level=logging.INFO)
 logging.info('Fecha y hora de INICIO: ' + time.strftime('%c'))
